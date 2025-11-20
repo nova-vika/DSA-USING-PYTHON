@@ -1,0 +1,347 @@
+                            #1) What is an anagram? 
+
+# Two strings s and t are anagrams if they contain the same letters with the same counts, ignoring order.
+
+# listen and silent → anagrams (each letter appears the same number of times)
+
+# hello and oelll → not anagrams (counts differ)
+
+# Think of each string as a bag of letters. If both bags have identical contents (same letters and quantities), they are anagrams.
+
+
+     # 3) Common methods (brief) and which is efficient
+
+# Sorting
+-----------
+# Idea: sort both strings and compare: sorted(s) == sorted(t).
+
+# Time: O(n log n), Space: O(n).
+
+# Simple, but slower for large inputs.
+_____________________________________________________________________________________________--
+
+# Counting / Hashing (dictionary or Counter) ← Most efficient & flexible
+--------------------------------------------------------------------------
+# Idea: build a frequency map for s and reduce using t (or directly use Counter and compare).
+
+# Time: O(n), Space: O(k) where k = distinct characters.
+
+# Works for any character set.
+_____________________________________________________________________________________________________
+
+# Fixed-size array (only a–z)
+--------------------------------
+# Idea: use array size 26 to count characters (ord trick).
+
+# Time: O(n), Space: O(1) (constant 26).
+
+# Fast but limited: only for lowercase English letters.
+
+#                      Which to choose?
+
+# For interviews and general use, counting/hash (dictionary or collections.Counter) is the recommended default: fast (O(n)), easy to explain, works for all characters. Use the 26-array trick only if the problem explicitly limits input to lowercase letters and you need tiny constant space.
+---------------------------------------------------------------------------------------------------------------------
+
+# ✅ ⭐ METHOD 1 — SORTING
+# ✔ Idea:
+
+#If you sort both strings, and the sorted versions are the same, then the strings are anagrams.
+_____________________________________________________________________________________________
+class Solution:                                                                             |
+    def isAnagram(self, s: str, t: str) -> bool:                                            |
+                                                                                            |
+        # Step 1: If lengths differ, cannot be anagrams                                     |
+        if len(s) != len(t):                                                                |
+            return False                                                                    |
+                                                                                            |
+        # Step 2: Sort both strings                                                         |
+        sorted_s = sorted(s)                                                                |
+        sorted_t = sorted(t)                                                                |
+                                                                                            |
+        # Step 3: Compare sorted lists                                                      |
+        return sorted_s == sorted_t                                                         |
+____________________________________________________________________________________________|
+
+# 📘 Explanation:
+# class Solution:
+
+
+# LeetCode wrapper class.
+
+# def isAnagram(self, s: str, t: str) -> bool:
+
+
+# Define the function.
+
+# if len(s) != len(t):
+ #   return False
+
+
+# If lengths differ → impossible to be anagrams.
+
+# sorted_s = sorted(s)
+# sorted_t = sorted(t)
+
+
+# sorted() arranges letters alphabetically.
+# Example: "silent" → ['e','i','l','n','s','t']
+
+# return sorted_s == sorted_t
+
+
+# If both sorted lists match → anagram.
+
+# ⏱ Complexity:
+
+# Time: O(n log n)
+
+# Space: O(n)
+
+                # ⭐ METHOD 2 — HASHING (Dictionary Counting)
+# ✔ Idea:
+
+# Count letters in s, subtract letters using t.
+# If everything matches → anagram.
+
+# ✅ Code (with every line explained — most important)
+____________________________________________________________________
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        
+        # Step 1: Length check
+        if len(s) != len(t):
+            return False
+        
+        # Step 2: Create dictionary to count characters
+        freq = {}
+        
+        # Step 3: Count letters in s
+        for ch in s:
+            freq[ch] = freq.get(ch, 0) + 1
+        
+        # Step 4: Subtract using letters in t
+        for ch in t:
+            if ch not in freq:   # t has a letter s does not
+                return False
+            freq[ch] -= 1        # subtract 1 count
+            if freq[ch] < 0:     # t has more of a letter
+                return false
+_____________________________________________________________________
+        # Step 5: If all good, return True
+        return True
+
+# 📘 Explanation:
+# if len(s) != len(t):
+#    return False
+
+
+# If lengths differ → cannot be anagrams.
+
+# freq = {}
+
+
+# Dictionary to store counts.
+
+# for ch in s:
+#    freq[ch] = freq.get(ch, 0) + 1
+
+
+# Count letters in s.
+# get(ch,0) means if letter is not present, start from 0.
+
+#  for ch in t:
+#     if ch not in freq:
+  #       return False
+
+
+# If t has a letter that s doesn't → not anagram.
+
+# freq[ch] -= 1
+#  if freq[ch] < 0:
+ #    return False
+
+
+#  Subtract counts.
+#  If any count becomes negative → t has extra letters.
+
+#  return True
+
+
+#  All counts match → anagram.
+
+#  ⏱ Complexity:
+
+#  Time: O(n)
+#  Space: O(k) (k = distinct characters)
+
+#  ➡ Best method for interviews.
+
+     ⭐ METHOD 3 — FIXED ARRAY (26 lowercase letters only)
+✔ Idea:
+
+Instead of dictionary, use an array of size 26.
+
+
+# Code format.
+___________________________________________________________________________-
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        
+        # Step 1: Length check
+        if len(s) != len(t):
+            return False
+        
+        # Step 2: Create a list of zeros (26 letters)
+        count = [0] * 26
+        base = ord('a')  # ASCII value of 'a'
+        
+        # Step 3: Count letters in s
+        for ch in s:
+            index = ord(ch) - base
+            count[index] += 1
+        
+        # Step 4: Subtract counts using t
+        for ch in t:
+            index = ord(ch) - base
+            count[index] -= 1
+            if count[index] < 0:
+                return False
+ ___________________________________________________________________________       
+        # Step 5: All counts zero → anagram
+        return True
+# We create a class → define a function inside it.
+
+#class Solution:
+ #   def isAnagram(self, s: str, t: str) -> bool:
+
+# ⭐ Step 1: Length check
+# if len(s) != len(t):
+ #   return False
+
+
+ # If two words have different sizes, they can never have the same number of letters.
+
+# Example:
+# "cat" (3 letters) vs "taco" (4 letters) → impossible to be anagrams.
+
+# So if lengths differ → return False instantly.
+
+# ⭐ Step 2: Create a count array for 26 letters
+# count = [0] * 26
+# base = ord('a')
+
+# 👉 count = [0] * 26
+
+# Creates a list of 26 zeros:
+
+# [0, 0, 0, 0, 0, ... 0]   (26 times)
+
+
+# Each position represents a letter from 'a' to 'z'.
+
+# Index	Letter
+# 0	a
+# 1	b
+# 2	c
+# ...	...
+# 25	z
+# 👉 base = ord('a')
+
+# ord() gives the ASCII number of a character.
+
+# This helps us convert 'a' to index 0, 'b' to index 1, etc.
+
+# Example:
+
+# ord('b') - ord('a') = 98 - 97 = 1 → index 1
+
+
+# This gives us a clean mapping from characters → array positions.
+
+# ⭐ Step 3: Count letters in s
+# for ch in s:
+ # index = ord(ch) - base
+  #  count[index] += 1
+
+# Explain:
+# 1) for ch in s:
+
+# Loop through each letter in string s.
+
+# 2) index = ord(ch) - base
+
+# Convert the letter into an array index.
+
+# Examples:
+
+# ch = 'c' → ord('c') = 99 → 99 - 97 = 2 → index 2
+# ch = 'a' → index 0
+# ch = 'z' → index 25
+
+# 3) count[index] += 1
+
+# Add 1 to that letter’s count.
+
+# So if s = "aabc"
+
+# After counting:
+
+# count = [2, 1, 1, 0, 0, 0 ...]
+#          a  b  c
+
+# ⭐ Step 4: Subtract letters using t
+# for ch in t:
+ #   index = ord(ch) - base
+ #   count[index] -= 1
+  #    if count[index] < 0:
+ #       return False
+
+# Explain:
+# 1) for ch in t:
+
+# Loop through every letter in t.
+
+# 2) Find the index of the letter (same as above)
+# 3) count[index] -= 1
+
+# We subtract because letters from t must cancel out letters from s.
+
+# Example:
+ # count[a] was 2 because s had two 'a's.
+
+# t has 'a' → reduce count to 1.
+# Another 'a' → reduce count to 0.
+
+# 4) ❌ if count goes negative
+# if count[index] < 0:
+ #   return False
+
+
+# This means:
+
+# t has more of a letter than s
+
+# Example:
+#  s = "aab"
+# t = "aaa" → third 'a' makes count negative → not anagram.
+
+# So return False.
+
+# ⭐ Step 5: Everything matched
+# return True
+
+
+# If we never got a negative count, and counts matched perfectly:
+
+# 🎉 s and t are anagrams!
+______________________________________________________________________________________________________________________________________------
+🎯 FINAL CONCLUSION :
+
+Method           	Time         Space	         Works For             	Best Use
+Sorting	         O(n log n)	     O(n)	      any characters	       simple method
+Hashing / Dict 	⭐O(n)	       O(k)	         any characters	        ⭐BEST ALL-ROUNDER
+26-array	    ⭐O(n)	       ⭐O(1)     	only a–z lowercase    	fastest in constraints
+
+👉 For interviews → use hashing/dictionary method
+👉 For simple explanation → sorting is easiest
+👉 For competitive programming → 26-array is fastest if valid
